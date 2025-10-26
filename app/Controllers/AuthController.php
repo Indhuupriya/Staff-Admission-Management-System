@@ -17,7 +17,6 @@ class AuthController extends Controller
     {
         $session = session();
         if ($session->get('isLoggedIn')) {
-            // User already logged in, redirect to dashboard
             return redirect()->to('/dashboard');
         }
         return view('auth/login');
@@ -32,17 +31,13 @@ class AuthController extends Controller
         if (!$user) {
             return redirect()->back()->with('error', 'Invalid username or password');
         }
-
         if (password_verify($password, $user['password'])) {
-            // ✅ Create session
             $session = session();
             $session->set([
                 'isLoggedIn' => true,
                 'staff_id' => $user['id'],
                 'staff_name' => $user['name'],
             ]);
-
-            // ✅ Generate JWT token
             $key = getenv('JWT_SECRET') ?: 'secret-key';
             $payload = [
                 'iss' => base_url(),
