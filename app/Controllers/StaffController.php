@@ -9,13 +9,12 @@ class StaffController extends ResourceController
     protected $location;
     public function __construct(){ $this->staff = new StaffModel(); $this->location = new LocationModel(); }
 
-    public function index() { // shows web page
+    public function index() { 
         
         $data['locations'] = $this->location->findAll();
         echo view('staffs/index', $data);
     }
 
-    // API: list (for DataTable)
     public function apiList()
     {
         $staffs = $this->staff->findAll();
@@ -28,9 +27,7 @@ class StaffController extends ResourceController
                        ->where('staff_id', $staff['id'])
                        ->get()
                        ->getResultArray();
-            // store array of IDs
             $staff['location_ids'] = array_column($locs, 'id');
-            // store names for display
             $staff['locations'] = array_column($locs, 'name');
         }    
         return $this->respond(['data'=>$staffs]);
@@ -40,10 +37,8 @@ class StaffController extends ResourceController
     {
         $json = $this->request->getJSON();
         $post = (array)$json;
-        // validate...
         $post['password'] = password_hash($post['password'], PASSWORD_DEFAULT);
         $id = $this->staff->insert($post);
-        // handle locations pivot
         if(isset($post['locations']) && is_array($post['locations'])){
             $db = \Config\Database::connect();
             foreach($post['locations'] as $loc){
@@ -62,7 +57,6 @@ class StaffController extends ResourceController
             unset($json['password']);
         }
         $this->staff->update($id, $json);
-        // update pivot: clear then insert
         $db = \Config\Database::connect();
         $db->table('staff_locations')->where('staff_id',$id)->delete();
         if(isset($json['locations']) && is_array($json['locations'])){
