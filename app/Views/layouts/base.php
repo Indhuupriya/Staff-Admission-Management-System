@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title><?= esc($title ?? 'Staff & Admissions') ?></title>
 
-  <!-- CSRF meta -->
   <meta name="csrf-name" content="<?= csrf_token() ?>">
   <meta name="csrf-hash" content="<?= csrf_hash() ?>">
 
-  <!-- Assets (CDN) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
@@ -19,7 +17,6 @@
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 
   <style>
-    /* small helpers */
     .mt-20{ margin-top:20px; }
     canvas{ background:#fff; border:1px solid #ddd; }
   </style>
@@ -40,15 +37,12 @@
   </div>
 
   <script>
-  // Global JS: provide csrf data and JWT header for AJAX requests
   const CSRF_NAME = $('meta[name="csrf-name"]').attr('content');
   let CSRF_HASH = $('meta[name="csrf-hash"]').attr('content');
   const JWT_TOKEN = "<?= session()->get('jwt_token') ?? '' ?>";
 
-  // Attach CSRF and Authorization for jQuery AJAX automatically
   $.ajaxSetup({
     beforeSend: function(xhr, settings){
-      // Add CSRF as header or a field based on server config
       if(CSRF_NAME && CSRF_HASH){
         xhr.setRequestHeader('X-CSRF-TOKEN', CSRF_HASH);
       }
@@ -59,7 +53,6 @@
     }
   });
 
-  // update CSRF token when server returns a new one (optional)
   $(document).ajaxComplete(function(event, xhr, settings){
     const tokenName = CSRF_NAME;
     const newHash = xhr.getResponseHeader('X-CSRF-HASH');
