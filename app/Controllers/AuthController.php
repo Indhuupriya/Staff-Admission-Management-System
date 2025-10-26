@@ -15,6 +15,11 @@ class AuthController extends Controller
 
     public function showLogin()
     {
+        $session = session();
+        if ($session->get('isLoggedIn')) {
+            // User already logged in, redirect to dashboard
+            return redirect()->to('/dashboard');
+        }
         return view('auth/login');
     }
 
