@@ -81,7 +81,6 @@
 
 <script>
 $(function(){
-  // signature pad init
   var canvas = document.getElementById('sigCanvas');
   var signaturePad = new SignaturePad(canvas);
 
@@ -92,8 +91,6 @@ $(function(){
     $('#patient_signature').val(dataUrl);
     alert('Signature captured');
   });
-
-  // DataTable
   const table = $('#admissions_table').DataTable({
     ajax: {
       url: '<?= base_url("api/admissions") ?>',
@@ -121,8 +118,6 @@ $(function(){
         }}
     ]
   });
-
-  // open modal for new
   $('#openAddAdmission').click(function(){
     $('#admissionForm')[0].reset();
     $('#admission_id').val('');
@@ -130,8 +125,6 @@ $(function(){
     $('#patient_signature').val('');
     $('#admissionModal').modal('show');
   });
-
-  // submit admission
   $('#admissionForm').submit(function(e){
     e.preventDefault();
     const payload = {
@@ -156,8 +149,6 @@ $(function(){
       error: function(xhr){ alert('Error: ' + xhr.responseText); }
     });
   });
-
-  // status change
   $('#admissions_table').on('change', '.admission-status', function(){
     const id = $(this).data('id'), status = $(this).val();
     $.ajax({
@@ -168,14 +159,11 @@ $(function(){
       success: function(){ table.ajax.reload(null,false); }
     });
   });
-
-  // view admission (show details + signature)
   $('#admissions_table').on('click', '.viewAdmission', function(){
     const id = $(this).data('id');
     // fetch the row data from table cache
     const row = table.rows().data().toArray().find(r => r.id == id);
     if(!row) return alert('Not found');
-    // populate modal
     $('#admission_id').val(row.id);
     $('#patient_name').val(row.patient_name);
     $('#patient_phone').val(row.patient_phone);
@@ -183,7 +171,6 @@ $(function(){
     $('input[name=admission_type][value="'+row.admission_type+'"]').prop('checked', true);
     $('#created_branch').val(row.created_branch || '');
     if(row.patient_signature){
-      // show signature in a new window or replace canvas
       const win = window.open("");
       win.document.write('<img src="'+row.patient_signature+'" alt="signature">');
     } else {
