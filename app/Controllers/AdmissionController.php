@@ -16,7 +16,6 @@ class AdmissionController extends ResourceController
 
     public function apiList()
     {
-        // For DataTable server side, you may accept draw/start/length; here's a simple return all:
         $db = \Config\Database::connect();
         $builder = $db->table('admissions a')
             ->select('a.*, s.name as staff_name, s.branch as staff_branch')
@@ -30,7 +29,6 @@ class AdmissionController extends ResourceController
     public function apiCreate()
     {
         $json = $this->request->getJSON(true);
-        // signature may be base64/svg string saved in patient_signature
         $this->admission->insert($json);
         return $this->respondCreated(['status'=>'created']);
     }
