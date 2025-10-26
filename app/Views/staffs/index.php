@@ -150,7 +150,7 @@ $(function(){
     });
   });
 
-  // save (create/update) - using JSON AJAX
+  // save 
   $('#staffForm').submit(function(e){
     e.preventDefault();
     const id = $('#staff_id').val();
