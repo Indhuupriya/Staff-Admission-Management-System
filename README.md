@@ -1,68 +1,82 @@
-# CodeIgniter 4 Application Starter
+1. Clone the repository
+git clone "https://github.com/Indhuupriya/Staff-Admission-Management-System.git"
+cd Staff-Admission-Management-System
+Explanation:
+This downloads the project from GitHub to your local machine.
+cd moves you inside the project folder.
 
-## What is CodeIgniter?
+2. Install PHP dependencies
+composer install
+Explanation:
+Installs all required PHP packages for CodeIgniter 4 (like JWT, database library, etc.) from composer.json.
+vendor folder will be created.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+3. Set up environment file
+Copy .env.example to .env:
+copy .env.example .env   # Windows
+cp .env.example .env     # Linux/Mac
+Edit .env:
+Set your database credentials:
+database.default.database = your_database_name
+database.default.username = root
+database.default.password =
+Add a JWT secret token:
+JWT_SECRET=your_generated_token
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+4. Generate JWT token
+php -r "echo bin2hex(random_bytes(32));"
+Explanation:
+Generates a 32-byte random string, used as your JWT secret key.
+Copy this value and set it as JWT_SECRET in .env.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+5. Run migrations
+php spark migrate
+Explanation:
+Creates all required tables in your database (staffs, locations, staff_locations, etc.).
+Migrations are like “database blueprints” for your app.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+6. Seed initial data
+php spark db:seed StaffSeeder
+Explanation:
+Populates the database with default data, e.g., an admin user.
+This is why you can login immediately with:
+username: admin
+password: Test@123
 
-## Installation & updates
+7. Start the local server
+php spark serve
+Explanation:
+Starts a development server, usually at http://localhost:8080.
+Now you can access the app in your browser.
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+8. Test login
+Go to http://localhost:8080
+Use the credentials seeded by StaffSeeder:
+username: admin
+password: Test@123
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+After login:
 
-## Setup
+JWT token is created and stored in session.
+You can access /dashboard and staff management pages.
+If session is destroyed (logout), JWT token is invalid, and login page shows.
+Process Flow Overview
+User visits / → AuthController::showLogin
+If session exists → redirect to /dashboard
+Else → show login form.
+Login form submitted → AuthController::login
+Validate credentials.
+If valid → create session + JWT token.
+Redirect to /dashboard.
+Dashboard → shows staff list, admissions, etc.
+AJAX requests → hit /api/* routes
+Filtered by jwtAuth middleware (JWT token required).
+Staff CRUD
+apiList → fetch staff + locations
+apiCreate → add staff + save locations
+apiUpdate → edit staff + update locations
+apiDelete → delete staff + remove from pivot table
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+If you want, I can also draw a simple flowchart diagram showing this login → dashboard → API → staff locations flow.
 
-## Important Change with index.php
-
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
-
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Server Requirements
-
-PHP version 7.4 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-> [!WARNING]
-> The end of life date for PHP 7.4 was November 28, 2022.
-> The end of life date for PHP 8.0 was November 26, 2023.
-> If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> The end of life date for PHP 8.1 will be November 25, 2024.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Do you want me to make that diagram?
