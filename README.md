@@ -77,6 +77,3 @@ apiCreate → add staff + save locations
 apiUpdate → edit staff + update locations
 apiDelete → delete staff + remove from pivot table
 
-If you want, I can also draw a simple flowchart diagram showing this login → dashboard → API → staff locations flow.
-
-Do you want me to make that diagram?
